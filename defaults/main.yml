@@ -39,7 +39,7 @@ consul_config_file: "{{ consul_conf_dir }}/{{ consul_config }}"
 consul_config_mode: "0640"
 
 consul_log_file: "{{ logdir }}/consul.log"
-consul_log_json: "true"
+consul_log_json: true
 consul_log_level: "info"
 consul_log_rotate_duration: "168h"  # 1 week
 
