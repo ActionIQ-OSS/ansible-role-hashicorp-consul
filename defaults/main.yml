@@ -20,7 +20,6 @@ localstatedir: "/var"
 sharedstatedir: "{{ localstatedir }}/lib"
 sbindir: "/usr/sbin"
 rundir: "{{ localstatedir }}/run"
-logdir: "{{ localstatedir }}/log"
 unitdir: "/lib/systemd/system"
 netplan_dir: "{{ sysconfdir }}/netplan"
 
