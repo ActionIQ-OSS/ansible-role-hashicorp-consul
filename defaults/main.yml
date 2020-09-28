@@ -37,6 +37,11 @@ consul_config_template: "{{ consul_config }}.j2"
 consul_config_file: "{{ consul_conf_dir }}/{{ consul_config }}"
 consul_config_mode: "0640"
 
+consul_dogstatsd_metrics_enabled: true
+datadog_dogstatsd_port: 8125
+datadog_dogstatsd_host: "127.0.0.1"
+datadog_dogstatsd_address: "{{ datadog_dogstatsd_host }}:{{ datadog_dogstatsd_port }}"
+
 # consul gossip encryption
 consul_gossip_encryption_enabled: true
 consul_encrypt_verify_incoming_enable: "true"
