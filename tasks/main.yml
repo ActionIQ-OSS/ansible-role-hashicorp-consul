@@ -1,104 +1,25 @@
 ---
 # tasks file for ansible-role-hashicorp-consul
+- name: Load OS specific variables
+  include_vars: "{{ ansible_distribution }}.yml"
+
 - name: Read bootstrapped state
   stat:
     path: "{{ consul_bootstrap_state }}"
   register: bootstrap_state
   tags: always
 
-- name: Check status of Hashicorp Consul binary
-  stat:
-    path: "{{ consul_exec }}"
-  register: bin_results
+- name: Include Hashicorp Consul user_groups tasks
+  include_tasks: "user-group.yml"
 
-- name: Ensure desired Consul v{{ consul_version }} is installed
-  command: "{{ consul_ver_cmd }}"
-  register: version_check
-  changed_when: "version_check.rc != 0 or target_version not in version_check.stdout"
-  when: "bin_results.stat.exists"
-  notify: "remove-consul"
+- name: Include Hashicorp Consul install tasks
+  include_tasks: "install-consul.yml"
 
-- meta: flush_handlers
+- name: Include Hashicorp Consul dirs tasks
+  include_tasks: "dirs.yml"
 
-- name: Ensure {{ consul_group }} group exists
-  group:
-    name: "{{ consul_group }}"
-    state: present
-
-- name: Ensure {{ consul_user }} user exists
-  user:
-    name: "{{ consul_user }}"
-    shell: "{{ consul_user_shell }}"
-    home: "{{ consul_run_dir }}"
-    group: "{{ consul_group }}"
-    system: "{{ consul_user_is_system }}"
-
-- name: Ensure unzip package is available for Ansible unarchive task
-  package:
-    name: unzip
-    state: present
-
-- name: Download and extract Hashicorp Consul
-  unarchive:
-    src: "{{ consul_download }}"
-    dest: "{{ sbindir }}"
-    mode: "{{ consul_exec_mode }}"
-    remote_src: true
-  args:
-    creates: "{{ consul_exec }}"
-  register: consul_download_result
-  until: consul_download_result is succeeded
-
-- name: Ensure Hashicorp Consul {{ consul_conf_dir }} directory exists
-  file:
-    path: "{{ consul_conf_dir }}"
-    mode: "{{ consul_conf_dir_mode }}"
-    state: directory
-
-- name: Copy Hashicorp {{ consul_config_file }} configuration
-  template:
-    src: "{{ consul_config_template }}"
-    dest: "{{ consul_config_file }}"
-    owner: "{{ consul_user }}"
-    group: "{{ consul_group }}"
-    mode: "{{ consul_config_mode }}"
-  notify: restart-consul
-
-- name: Include Hashicorp Consul gossip tasks
-  include_tasks: "encrypt_gossip.yml"
-  when: consul_gossip_encryption_enabled is true
-
-- name: Ensure Hashicorp Consul {{ consul_confd_dir }} directory exists
-  file:
-    path: "{{ consul_confd_dir }}"
-    owner: "{{ consul_user }}"
-    group: "{{ consul_group }}"
-    mode: "{{ consul_confd_dir_mode }}"
-    state: directory
-
-- name: Copy Hashicorp {{ consul_default_config }} configuration
-  template:
-    src: "{{ consul_sys_default_template }}"
-    dest: "{{ consul_default_config }}"
-    mode: "{{ consul_default_config_mode }}"
-  notify: restart-consul
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-- name: Copy Hashicorp {{ consul_sysconfig }} configuration
-  template:
-    src: "{{ consul_sys_default_template }}"
-    dest: "{{ consul_sysconfig }}"
-    mode: "{{ consul_sysconfig_mode }}"
-  notify: restart-consul
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-- name: Ensure Hashicorp Consul {{ consul_data_dir }} directory exists
-  file:
-    path: "{{ consul_data_dir }}"
-    state: directory
-    owner: "{{ consul_user }}"
-    group: "{{ consul_group }}"
-    mode: "{{ consul_data_dir_mode }}"
+- name: Include Hashicorp Consul config tasks
+  include_tasks: "config.yml"
 
 - name: Copy Hashicorp Consul Systemd Unit file
   template:
@@ -107,7 +28,8 @@
     mode: "{{ consul_systemd_file_mode }}"
   notify: restart-consul
 
-- meta: flush_handlers
+- name: Run systemd related handlers
+  meta: flush_handlers
 
 - name: Ensure Hashicorp Consul is started and enabled
   service:
@@ -115,13 +37,12 @@
     state: started
     enabled: true
 
+- name: Configure Forward DNS for Hashicorp Consul Service Discovery via DNS
+  include_tasks: "config-forward-dns.yml"
+
 - name: Create boostrapped state file
   file:
     dest: "{{ consul_bootstrap_state }}"
     state: touch
     mode: "600"
   when: not bootstrap_state.stat.exists
-
-- name: Install dnsmasq for Hashicorp Consul Service Discovery via DNS
-  include_tasks: "install-dnsmasq-{{ ansible_distribution }}.yml"
-  when: dnsmasq_enabled is true

@@ -1,0 +1,31 @@
+---
+# File: config.yml - Consul configuration tasks
+
+- name: Copy Hashicorp {{ consul_config_file }} configuration
+  template:
+    src: "{{ consul_config_template }}"
+    dest: "{{ consul_config_file }}"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: "{{ consul_config_mode }}"
+  notify: restart-consul
+
+- name: Include Hashicorp Consul gossip tasks
+  include_tasks: "encrypt-gossip.yml"
+  when: consul_gossip_encryption_enabled is true
+
+- name: Copy Hashicorp {{ consul_default_config }} configuration
+  template:
+    src: "{{ consul_sys_default_template }}"
+    dest: "{{ consul_default_config }}"
+    mode: "{{ consul_default_config_mode }}"
+  notify: restart-consul
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Copy Hashicorp {{ consul_sysconfig }} configuration
+  template:
+    src: "{{ consul_sys_default_template }}"
+    dest: "{{ consul_sysconfig }}"
+    mode: "{{ consul_sysconfig_mode }}"
+  notify: restart-consul
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'

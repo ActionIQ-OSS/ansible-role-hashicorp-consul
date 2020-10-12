@@ -27,7 +27,7 @@ def test_consul_bin(host):
 
 def test_consul_bin_ver(host):
     consul_bin_ver = host.check_output('/usr/sbin/consul --version')
-    assert re.match("^Consul v1.8.3", consul_bin_ver)
+    assert re.match("^Consul v1.8.4", consul_bin_ver)
 
 
 def test_consul_conf_dir(host):
@@ -108,32 +108,3 @@ def test_consul_running_and_enabled(host):
 
     assert consul_service.is_running
     assert consul_service.is_enabled
-
-
-def test_dnsmasq_install(host):
-    dnsmasq_pkg = host.package('dnsmasq')
-
-    assert dnsmasq_pkg.is_installed
-
-
-def test_dnsmasq_config(host):
-    dnsmasq_config = host.file('/etc/dnsmasq.conf')
-
-    assert dnsmasq_config.exists
-    assert dnsmasq_config.is_file
-    assert dnsmasq_config.mode == 0o644
-
-
-def test_dnsmasq_consul_config(host):
-    dnsmasq_consul_config = host.file('/etc/dnsmasq.d/10-consul')
-
-    assert dnsmasq_consul_config.exists
-    assert dnsmasq_consul_config.is_file
-    assert dnsmasq_consul_config.mode == 0o666
-
-
-def test_dnsmasq_running_and_enabled(host):
-    dnsmasq_service = host.service('dnsmasq')
-
-    assert dnsmasq_service.is_running
-    assert dnsmasq_service.is_enabled

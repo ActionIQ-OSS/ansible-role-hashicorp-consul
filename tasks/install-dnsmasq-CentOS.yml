@@ -22,7 +22,8 @@
     mode: "{{ dnsmasq_conf_consul_file_mode }}"
   notify: "{{ dnsmasq_notify_restart }}"
 
-- meta: flush_handlers
+- name: Run dnsmasq related handler
+  meta: flush_handlers
 
 - name: Ensure dnsmasq is started and enabled
   service:

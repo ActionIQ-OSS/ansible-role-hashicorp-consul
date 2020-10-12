@@ -7,7 +7,7 @@ consul_user_shell: "/sbin/nologin"
 consul_group: "consul"
 
 target_version: "{{ consul_version }}"
-consul_version: "1.8.3"
+consul_version: "1.8.4"
 consul_os: "linux"
 consul_arch: "amd64"
 
@@ -85,7 +85,7 @@ consul_http_port: "8500"
 consul_dns_port: "8600"
 
 # dnsmasq settings
-dnsmasq_enabled: true  # must be bare
+dnsmasq_enabled: false  # must be bare
 dnsmasq_service: "dnsmasq"
 dnsmasq_bind_addr: "127.0.0.1"
 dnsmasq_install_pkg: "dnsmasq"
@@ -116,12 +116,21 @@ netplan_custom_dns_notify: "netplan-apply"
 # systemd-resolved settings
 systemd_resolved_service: "systemd-resolved"
 systemd_resolved_conf: "{{ sysconfdir }}/systemd/resolved.conf"
+systemd_resolved_conf_template: "resolved.conf.j2"
+systemd_resolved_conf_owner: "root"
+systemd_resolved_conf_group: "root"
+systemd_resolved_conf_mode: "644"
 systemd_resolved_regexp: "^#DNSStubListener="
 systemd_resolved_line: "DNSStubListener=no"
 systemd_resolved_restart: "restart-{{ systemd_resolved_service }}"
 systemd_resolved_service_name: "{{ systemd_resolved_service }}"
 systemd_resolved_service_state: "started"
 systemd_resolved_service_enabled: "true"
+systemd_resolved_service_port: "53"
+
+# iptables packages
+iptables_packages: iptables
+iptables_save_rules_v4: "{{ iptables_save_rules_v4_os }}"
 
 # system resolv.conf settings
 resolv_conf: resolv.conf

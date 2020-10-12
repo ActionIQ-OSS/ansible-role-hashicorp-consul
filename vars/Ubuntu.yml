@@ -1,0 +1,2 @@
+---
+iptables_save_rules_v4_os: "/etc/iptables/rules.v4"

@@ -1,0 +1,63 @@
+---
+# Ported from: https://raw.githubusercontent.com/ansible-community/ansible-consul/master/tasks/iptables.yml
+# File: iptables.yml - iptables tasks for Consul
+
+- name: Install iptables
+  package:
+    name: iptables
+    state: present
+
+- name: Ensure iptables-persistent installed
+  apt:
+    name: iptables-persistent
+    state: present
+  when: ansible_distribution == 'Ubuntu'
+  notify: iptables-save
+
+- name: Redirect local DNS - PREROUTING - UDP
+  iptables:
+    table: nat
+    chain: PREROUTING
+    protocol: udp
+    match: udp
+    destination_port: "{{ systemd_resolved_service_port }}"
+    jump: REDIRECT
+    to_ports: "{{ consul_dns_port }}"
+  notify: iptables-save
+
+- name: Redirect local DNS - PREROUTING - TCP
+  iptables:
+    table: nat
+    chain: PREROUTING
+    protocol: tcp
+    match: tcp
+    destination_port: "{{ systemd_resolved_service_port }}"
+    jump: REDIRECT
+    to_ports: "{{ consul_dns_port }}"
+  notify: iptables-save
+
+- name: Redirect local DNS - OUTPUT - UDP
+  iptables:
+    table: nat
+    chain: OUTPUT
+    protocol: udp
+    match: udp
+    destination_port: "{{ systemd_resolved_service_port }}"
+    jump: REDIRECT
+    to_ports: "{{ consul_dns_port }}"
+    destination: localhost
+  notify: iptables-save
+
+- name: Redirect local DNS - OUTPUT - TCP
+  iptables:
+    table: nat
+    chain: OUTPUT
+    protocol: tcp
+    match: tcp
+    destination_port: "{{ systemd_resolved_service_port }}"
+    jump: REDIRECT
+    to_ports: "{{ consul_dns_port }}"
+    destination: localhost
+  notify: iptables-save
+
+- meta: flush_handlers

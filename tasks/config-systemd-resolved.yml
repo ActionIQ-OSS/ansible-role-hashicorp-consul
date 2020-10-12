@@ -1,0 +1,12 @@
+---
+- name: add iptabes
+  include_tasks: iptables.yml
+
+- name: Configure {{ systemd_resolved_conf }}
+  template:
+    src: "{{ systemd_resolved_conf_template }}"
+    dest: "{{ systemd_resolved_conf }}"
+    owner: "{{ systemd_resolved_conf_owner }}"
+    group: "{{ systemd_resolved_conf_group }}"
+    mode: "{{ systemd_resolved_conf_mode }}"
+  notify: restart-systemd-resolved

@@ -1,0 +1,24 @@
+---
+# File: dirs.yml - Consul directories
+
+- name: Ensure Hashicorp Consul {{ consul_conf_dir }} directory exists
+  file:
+    path: "{{ consul_conf_dir }}"
+    mode: "{{ consul_conf_dir_mode }}"
+    state: directory
+
+- name: Ensure Hashicorp Consul {{ consul_confd_dir }} directory exists
+  file:
+    path: "{{ consul_confd_dir }}"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: "{{ consul_confd_dir_mode }}"
+    state: directory
+
+- name: Ensure Hashicorp Consul {{ consul_data_dir }} directory exists
+  file:
+    path: "{{ consul_data_dir }}"
+    state: directory
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: "{{ consul_data_dir_mode }}"

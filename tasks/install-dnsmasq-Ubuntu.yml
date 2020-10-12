@@ -50,7 +50,8 @@
   notify: "{{ systemd_resolved_restart }}"
   tags: molecule-notest
 
-- meta: flush_handlers
+- name: Run dnsmasq related handler
+  meta: flush_handlers
 
 - name: Ensure systemd-resolved is started and enabled
   service:

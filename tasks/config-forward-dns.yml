@@ -1,0 +1,7 @@
+---
+- name: Install dnsmasq for Hashicorp Consul Service Discovery via DNS
+  include_tasks: "install-dnsmasq-{{ ansible_distribution }}.yml"
+  when: dnsmasq_enabled is true
+
+- name: Configure systemd-resolved
+  include_tasks: "config-systemd-resolved.yml"

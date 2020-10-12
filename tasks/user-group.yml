@@ -1,0 +1,15 @@
+---
+# File: user_group.yml - User and group settings
+
+- name: Ensure {{ consul_group }} group exists
+  group:
+    name: "{{ consul_group }}"
+    state: present
+
+- name: Ensure {{ consul_user }} user exists
+  user:
+    name: "{{ consul_user }}"
+    shell: "{{ consul_user_shell }}"
+    home: "{{ consul_run_dir }}"
+    group: "{{ consul_group }}"
+    system: "{{ consul_user_is_system }}"

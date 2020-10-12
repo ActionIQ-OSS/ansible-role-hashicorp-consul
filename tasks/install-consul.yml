@@ -1,0 +1,31 @@
+---
+- name: Check status of Hashicorp Consul binary
+  stat:
+    path: "{{ consul_exec }}"
+  register: bin_results
+
+- name: Ensure desired Consul v{{ consul_version }} is installed
+  command: "{{ consul_ver_cmd }}"
+  register: version_check
+  changed_when: "version_check.rc != 0 or target_version not in version_check.stdout"
+  when: "bin_results.stat.exists"
+  notify: "remove-consul"
+
+- name: Run remove-consul handler tasks if necessary
+  meta: flush_handlers
+
+- name: Ensure unzip package is available for Ansible unarchive task
+  package:
+    name: unzip
+    state: present
+
+- name: Download and extract Hashicorp Consul
+  unarchive:
+    src: "{{ consul_download }}"
+    dest: "{{ sbindir }}"
+    mode: "{{ consul_exec_mode }}"
+    remote_src: true
+  args:
+    creates: "{{ consul_exec }}"
+  register: consul_download_result
+  until: consul_download_result is succeeded
