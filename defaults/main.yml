@@ -62,7 +62,7 @@ consul_systemd_template: "{{ consul_systemd }}.j2"
 consul_systemd_file: "{{ unitdir }}/{{ consul_systemd }}"
 consul_systemd_file_mode: "666"
 consul_systemd_runtime_dir: "{{ consul_service }}"
-consul_systemd_exec_start: "{{ consul_exec }} agent -config-dir={{ consul_conf_dir }} -config-dir={{ consul_confd_dir }} $CMD_OPTS"
+consul_systemd_exec_start: "{{ consul_exec }} agent -config-dir={{ consul_conf_dir }} -config-dir={{ consul_confd_dir }} -node={{ inventory_hostname_short}} $CMD_OPTS"
 
 consul_exec: "{{ sbindir }}/{{ consul_service }}"
 consul_exec_mode: "755"
