@@ -1,6 +1,6 @@
 # ansible-role-hashicorp-consul
 
-[![Build Status](https://travis-ci.org/OldCrowEW/ansible-role-hashicorp-consul.svg?branch=master)](https://travis-ci.org/OldCrowEW/ansible-role-hashicorp-consul)
+[![Build Status](https://github.com/OldCrowEW/ansible-role-hashicorp-consul/actions/workflows/molecule.yml/badge.svg?branch=master)](https://github.com/OldCrowEW/ansible-role-hashicorp-consul/actions)
 
 Consul is a distributed service mesh to connect, secure, and configure services across any runtime platform and public
 or private cloud.

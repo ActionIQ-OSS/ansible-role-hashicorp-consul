@@ -1,0 +1,32 @@
+---
+name: Molecule Test
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - centos8
+          - ubuntu1804
+          - ubuntu2004
+
+    steps:
+      - name: Checkout role
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: python3 -m pip install ansible ansible-lint flake8 molecule[docker] pytest-testinfra yamllint
+
+      - name: Test with molecule
+        run: molecule test
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_DISTRO: ${{ matrix.distro }}

@@ -1,6 +1,7 @@
 ---
 galaxy_info:
   role_name: consul
+  namespace: oldcrowew
   author: John Favorite
   description: Consul is a distributed service mesh to connect, secure, and configure services across any runtime platform and public or private cloud.
   company: n/a
