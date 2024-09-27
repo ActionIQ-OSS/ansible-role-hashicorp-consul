@@ -16,5 +16,6 @@
     "dogstatsd_addr": "{{ datadog_dogstatsd_address }}"
   },
   {%endif%}
-  "datacenter": "{{ consul_datacenter }}"
+  "datacenter": "{{ consul_datacenter }}",
+  "log_file": "{{ consul_log_dir }}"
 }
