@@ -31,7 +31,7 @@ consul_conf_dir_mode: "755"
 consul_bootstrap_state: "{{ consul_conf_dir }}/.consul_bootstrapped"
 consul_confd_dir: "{{ consul_conf_dir }}/conf.d"
 consul_confd_dir_mode: "755"
-consul_log_dir: "/var/log/
+consul_log_dir: "/var/log/"
 
 consul_config: "{{ consul_service }}.hcl"
 consul_config_template: "{{ consul_config }}.j2"
